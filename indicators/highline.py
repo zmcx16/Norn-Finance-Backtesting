@@ -7,7 +7,7 @@ class HighLine(bt.Indicator):
 
     plotinfo = dict(subplot=False)
     plotlines = dict(
-        high=dict(color='grey'),
+        high=dict(color='grey', linewidth=1),
     )
 
     def __init__(self):
