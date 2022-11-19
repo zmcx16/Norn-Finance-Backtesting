@@ -30,5 +30,8 @@ if __name__ == '__main__':
         openinterest=-1)
     cerebro.adddata(data0)
 
+    # Set the commission
+    cerebro.broker.setcommission(commission=0.0)
+
     cerebro.run()
     cerebro.plot()

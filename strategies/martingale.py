@@ -1,9 +1,10 @@
 from datetime import datetime
 import backtrader as bt
 
+import indicators as nfb_ind
 
-# Create a Stratey
-class TestStrategy(bt.Strategy):
+
+class Martingale(bt.Strategy):
     params = (
         ('maperiod', 15),
     )
@@ -22,19 +23,7 @@ class TestStrategy(bt.Strategy):
         self.buyprice = None
         self.buycomm = None
 
-        # Add a MovingAverageSimple indicator
-        self.sma = bt.indicators.SimpleMovingAverage(
-            self.datas[0], period=self.params.maperiod)
-
-        # Indicators for the plotting show
-        bt.indicators.ExponentialMovingAverage(self.datas[0], period=25)
-        bt.indicators.WeightedMovingAverage(self.datas[0], period=25,
-                                            subplot=True)
-        bt.indicators.StochasticSlow(self.datas[0])
-        bt.indicators.MACDHisto(self.datas[0])
-        rsi = bt.indicators.RSI(self.datas[0])
-        bt.indicators.SmoothedMovingAverage(rsi, period=10)
-        bt.indicators.ATR(self.datas[0], plot=False)
+        nfb_ind.HighLine(self.datas[0], period=252, rate=.05, color="#AA0000")
 
     def notify_order(self, order):
         if order.status in [order.Submitted, order.Accepted]:
@@ -81,53 +70,3 @@ class TestStrategy(bt.Strategy):
         # Check if an order is pending ... if yes, we cannot send a 2nd one
         if self.order:
             return
-
-        # Check if we are in the market
-        if not self.position:
-
-            # Not yet ... we MIGHT BUY if ...
-            if self.dataclose[0] > self.sma[0]:
-
-                # BUY, BUY, BUY!!! (with all possible default parameters)
-                self.log('BUY CREATE, %.2f' % self.dataclose[0])
-
-                # Keep track of the created order to avoid a 2nd order
-                self.order = self.buy()
-
-        else:
-
-            if self.dataclose[0] < self.sma[0]:
-                # SELL, SELL, SELL!!! (with all possible default parameters)
-                self.log('SELL CREATE, %.2f' % self.dataclose[0])
-
-                # Keep track of the created order to avoid a 2nd order
-                self.order = self.sell()
-
-
-if __name__ == '__main__':
-
-    cerebro = bt.Cerebro()
-    cerebro.addstrategy(TestStrategy)
-
-    data0 = bt.feeds.GenericCSVData(
-        dataname="../datas/SPY.csv",
-        fromdate=datetime(2021, 1, 1),
-        todate=datetime(2021, 10, 31),
-        nullvalue=0.0,
-        dtformat='%Y-%m-%d',
-        tmformat='%H.%M.%S',
-        datetime=0,
-        time=-1,
-        high=2,
-        low=3,
-        open=1,
-        close=4,
-        volume=5,
-        openinterest=-1)
-    cerebro.adddata(data0)
-
-    # Set the commission
-    cerebro.broker.setcommission(commission=0.0)
-
-    cerebro.run()
-    cerebro.plot()
