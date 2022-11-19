@@ -9,6 +9,7 @@ class Martingale(bt.Strategy):
     params = dict(
         period=252,
         trade_size=0.05,
+        position_error=0.1,
         min_positions=(
             (0, 0.2, "#bdbdbd"),
             (0.05, 0.4, "#9e9e9e"),
@@ -87,14 +88,14 @@ class Martingale(bt.Strategy):
         trade_size = 0
         for i in range(len(self.p.min_positions)):
             if self.data_close[0] < self.hl_list[i][0]:
-                if pos_r < self.p.min_positions[i][1]:
+                if pos_r < self.p.min_positions[i][1] - self.p.position_error:
                     trade_size = int(self.broker.getvalue() * self.p.trade_size / self.data_close[0])
                     self.log('+Close: %.2f(%.2f) pos: %.2f, pos_r: %.2f (%.2f), trade_size:%d' %
                              (self.data_close[0], self.hl_list[i][0], pos, pos_r, self.p.min_positions[i][1], trade_size))
 
         for i in reversed(range(len(self.p.min_positions))):
             if self.data_close[0] > self.hl_list[i][0]:
-                if i < len(self.p.min_positions)-1 and pos_r > self.p.min_positions[i+1][1]:
+                if pos_r > self.p.min_positions[i][1] + self.p.position_error:
                     trade_size = -1 * int(self.broker.getvalue() * self.p.trade_size / self.data_close[0])
                     self.log('-Close: %.2f(%.2f) pos: %.2f, pos_r: %.2f (%.2f), trade_size:%d' %
                              (self.data_close[0], self.hl_list[i][0], pos, pos_r, self.p.min_positions[i][1], trade_size))
