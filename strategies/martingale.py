@@ -16,13 +16,13 @@ class Martingale(bt.Strategy):
         period=252,
         trade_size=0.05,
         position_error=0.1,
-        min_positions=(
-            (0, 0.2, "#29b6f6"),
-            (0.05, 0.4, "#03a9f4"),
-            (0.1, 0.6, "#039be5"),
-            (0.15, 0.8, "#0288d1"),
-            (0.2, 1.0, "#0277bd"),
-        ),
+        min_positions=[
+            [0, 0.2, "#29b6f6"],
+            [0.05, 0.4, "#03a9f4"],
+            [0.1, 0.6, "#039be5"],
+            [0.15, 0.8, "#0288d1"],
+            [0.2, 1.0, "#0277bd"],
+        ],
     )
 
     def debug_log(self, txt):

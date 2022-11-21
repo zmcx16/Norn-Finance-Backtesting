@@ -19,14 +19,14 @@ if __name__ == '__main__':
     parser.add_argument("-plot", "-plot", dest="plot", default="1")
     parser.add_argument("-t", "-type", dest="type", default="1")
     parser.add_argument("-p", "-period", dest="period", default="252")
-    parser.add_argument("-s", "-trade-size", dest="trade_size", default="0.1")
+    parser.add_argument("-s", "-trade-size", dest="trade_size", default="0.05")
     parser.add_argument("-e", "-position-error", dest="position_error", default="0.05")
+    parser.add_argument("-mpl", "-min-position-list", dest="min_position_list", default="")
     args = parser.parse_args()
 
     logging.basicConfig(level=args.log_level)
 
-    cerebro = bt.Cerebro()
-
+    # parse strategy type
     stype = None
     if args.type == "1":
         stype = ndf_strats.MartingaleType.Martingale
@@ -37,19 +37,32 @@ if __name__ == '__main__':
         logging.error("Not support strategy")
         sys.exit()
 
+    # parse strategy min_position_list
+    min_positions = [
+        [0, 0.2, "#29b6f6"],
+        [0.05, 0.4, "#03a9f4"],
+        [0.1, 0.6, "#039be5"],
+        [0.15, 0.8, "#0288d1"],
+        [0.2, 1.0, "#0277bd"],
+    ]
+    if args.min_position_list != "" and "," in args.min_position_list:
+        min_positions = []
+        lines = args.min_position_list.split(";")
+        for line in lines:
+            p = line.split(",")
+            min_positions.append([float(p[0]), float(p[1]), p[2]])
+    else:
+        logging.warning("parse parameter failed, use default min_position_list")
+
     strategy_param = dict(
         type=stype,
         period=int(args.period),
         trade_size=float(args.trade_size),
         position_error=float(args.position_error),
-        min_positions=(
-            (0, 0.2, "#29b6f6"),
-            (0.05, 0.4, "#03a9f4"),
-            (0.1, 0.6, "#039be5"),
-            (0.15, 0.8, "#0288d1"),
-            (0.2, 1.0, "#0277bd"),
-        ),
+        min_positions=min_positions
     )
+
+    cerebro = bt.Cerebro()
     cerebro.addstrategy(ndf_strats.Martingale, strategy_param)
 
     cerebro.broker.setcommission()
@@ -77,7 +90,7 @@ if __name__ == '__main__':
 
     results = cerebro.run()
     result = results[0]
-    
+
     logging.info("******* %s result *******" % stype.name)
     returns = result.analyzers.returns.get_analysis()
     logging.info("Log Return: %s" % returns)
