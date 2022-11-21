@@ -9,7 +9,7 @@ import yfinance as yf
 if __name__ == "__main__":
 
     root = pathlib.Path(__file__).parent.resolve()
-    data_folder = root / "data"
+    data_folder = root / "datas"
     if not os.path.exists(data_folder):
         os.makedirs(data_folder)
 

@@ -1,6 +1,8 @@
+import sys
 import logging
 import argparse
 from datetime import datetime
+import numpy as np
 import backtrader as bt
 import backtrader.analyzers as btanalyzers
 
@@ -14,17 +16,32 @@ if __name__ == '__main__':
     parser.add_argument("-d", "-data", dest="data", default="./datas/SPY.csv")
     parser.add_argument("-from", "-from-date", dest="from_date", default="2015-01-01")
     parser.add_argument("-to", "-to-date", dest="to_date", default="2021-10-31")
+    parser.add_argument("-plot", "-plot", dest="plot", default="1")
+    parser.add_argument("-t", "-type", dest="type", default="1")
+    parser.add_argument("-p", "-period", dest="period", default="252")
+    parser.add_argument("-s", "-trade-size", dest="trade_size", default="0.1")
+    parser.add_argument("-e", "-position-error", dest="position_error", default="0.05")
     args = parser.parse_args()
 
     logging.basicConfig(level=args.log_level)
 
     cerebro = bt.Cerebro()
 
+    stype = None
+    if args.type == "1":
+        stype = ndf_strats.MartingaleType.Martingale
+    elif args.type == "-1":
+        stype = ndf_strats.MartingaleType.AntiMartingale
+
+    if stype is None:
+        logging.error("Not support strategy")
+        sys.exit()
+
     strategy_param = dict(
-        type=ndf_strats.MartingaleType.AntiMartingale,
-        period=252,
-        trade_size=0.1,
-        position_error=0.05,
+        type=stype,
+        period=int(args.period),
+        trade_size=float(args.trade_size),
+        position_error=float(args.position_error),
         min_positions=(
             (0, 0.2, "#29b6f6"),
             (0.05, 0.4, "#03a9f4"),
@@ -36,8 +53,10 @@ if __name__ == '__main__':
     cerebro.addstrategy(ndf_strats.Martingale, strategy_param)
 
     cerebro.broker.setcommission()
+    cerebro.addanalyzer(btanalyzers.Returns, _name='returns')
     cerebro.addanalyzer(btanalyzers.AnnualReturn, _name='annual_return')
     cerebro.addanalyzer(btanalyzers.SharpeRatio, _name='sharp_ratio')
+    cerebro.addanalyzer(btanalyzers.DrawDown, _name='draw_down')
 
     data0 = bt.feeds.GenericCSVData(
         dataname=args.data,
@@ -58,8 +77,16 @@ if __name__ == '__main__':
 
     results = cerebro.run()
     result = results[0]
+    
+    logging.info("******* %s result *******" % stype.name)
+    returns = result.analyzers.returns.get_analysis()
+    logging.info("Log Return: %s" % returns)
+    logging.info("Annual Return: %s" % result.analyzers.annual_return.get_analysis())
+    logging.info("Annual Return (Total): {0:.2%}".format(float(np.exp(np.cumsum(returns["rtot"])) - 1)))
+    logging.info("Sharp Ratio: %s" % result.analyzers.sharp_ratio.get_analysis())
+    logging.info("Draw Down: %s" % result.analyzers.draw_down.get_analysis().max)
 
-    logging.info(result.analyzers.annual_return.get_analysis())
-    logging.info(result.analyzers.sharp_ratio.get_analysis())
+    if args.plot == "1":
+        cerebro.plot()
 
-    cerebro.plot()
+    logging.info('all task done')
