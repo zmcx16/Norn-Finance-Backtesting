@@ -1,4 +1,5 @@
 import sys
+import json
 import logging
 import argparse
 from datetime import datetime
@@ -14,6 +15,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-l", "-log-level", dest="log_level", default="INFO")
     parser.add_argument("-d", "-data", dest="data", default="./datas/SPY.csv")
+    parser.add_argument("-o", "-output-path", dest="output_path", default="./result.json")
     parser.add_argument("-from", "-from-date", dest="from_date", default="2015-01-01")
     parser.add_argument("-to", "-to-date", dest="to_date", default="2021-10-31")
     parser.add_argument("-plot", "-plot", dest="plot", default="1")
@@ -91,13 +93,26 @@ if __name__ == '__main__':
     results = cerebro.run()
     result = results[0]
 
-    logging.info("******* %s result *******" % stype.name)
     returns = result.analyzers.returns.get_analysis()
-    logging.info("Log Return: %s" % returns)
-    logging.info("Annual Return: %s" % result.analyzers.annual_return.get_analysis())
-    logging.info("Annual Return (Total): {0:.2%}".format(float(np.exp(np.cumsum(returns["rtot"])) - 1)))
-    logging.info("Sharp Ratio: %s" % result.analyzers.sharp_ratio.get_analysis())
-    logging.info("Draw Down: %s" % result.analyzers.draw_down.get_analysis().max)
+    output = {
+        "strategy_name": stype.name,
+        "strategy_param": strategy_param,
+        "returns": returns,
+        "annual_return": result.analyzers.annual_return.get_analysis(),
+        "annual_return_total": float(np.exp(np.cumsum(returns["rtot"])) - 1),
+        "sharp_ratio": result.analyzers.sharp_ratio.get_analysis(),
+        "draw_down": result.analyzers.draw_down.get_analysis().max
+    }
+
+    logging.info("******* %s result *******" % stype.name)
+    logging.info("Log Return: %s" % output["returns"])
+    logging.info("Annual Return: %s" % output["annual_return"])
+    logging.info("Annual Return (Total): {0:.2%}".format(output["annual_return_total"]))
+    logging.info("Sharp Ratio: %s" % output["sharp_ratio"])
+    logging.info("Draw Down: %s" % output["draw_down"])
+
+    with open(args.output_path, 'w', encoding='utf-8') as f:
+        f.write(json.dumps(output, indent=4))
 
     if args.plot == "1":
         cerebro.plot()
