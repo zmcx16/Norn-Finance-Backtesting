@@ -16,8 +16,8 @@ if __name__ == '__main__':
     parser.add_argument("-l", "-log-level", dest="log_level", default="INFO")
     parser.add_argument("-d", "-data", dest="data", default="./datas/SPY.csv")
     parser.add_argument("-o", "-output-path", dest="output_path", default="./result.json")
-    parser.add_argument("-from", "-from-date", dest="from_date", default="2015-01-01")
-    parser.add_argument("-to", "-to-date", dest="to_date", default="2021-10-31")
+    parser.add_argument("-from", "-from-date", dest="from_date", default="1999-01-01")
+    parser.add_argument("-to", "-to-date", dest="to_date", default="2021-12-31")
     parser.add_argument("-plot", "-plot", dest="plot", default="1")
     parser.add_argument("-t", "-type", dest="type", default="1")
     parser.add_argument("-p", "-period", dest="period", default="252")
@@ -99,7 +99,7 @@ if __name__ == '__main__':
         "strategy_param": strategy_param,
         "returns": returns,
         "annual_return": result.analyzers.annual_return.get_analysis(),
-        "annual_return_total": float(np.exp(np.cumsum(returns["rtot"])) - 1),
+        "cumulative_return": float(np.exp(np.cumsum(returns["rtot"])) - 1),
         "sharp_ratio": result.analyzers.sharp_ratio.get_analysis(),
         "draw_down": result.analyzers.draw_down.get_analysis().max
     }
@@ -107,9 +107,9 @@ if __name__ == '__main__':
     logging.info("******* %s result *******" % stype.name)
     logging.info("Log Return: %s" % output["returns"])
     logging.info("Annual Return: %s" % output["annual_return"])
-    logging.info("Annual Return (Total): {0:.2%}".format(output["annual_return_total"]))
-    logging.info("Sharp Ratio: %s" % output["sharp_ratio"])
+    logging.info("Cumulative Return: {0:.2%}".format(output["cumulative_return"]))
     logging.info("Draw Down: %s" % output["draw_down"])
+    logging.info("Sharp Ratio: %s" % output["sharp_ratio"])
 
     with open(args.output_path, 'w', encoding='utf-8') as f:
         f.write(json.dumps(output, indent=4))
