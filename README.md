@@ -1,4 +1,5 @@
 # Norn-Finance-Backtesting
+![Build Badge](https://github.com/zmcx16/Norn-Finance-Backtesting/workflows/build/badge.svg)
 [![codecov](https://codecov.io/gh/zmcx16/Norn-Finance-Backtesting/branch/master/graph/badge.svg?token=tvxcZ3NgZ0)](https://codecov.io/gh/zmcx16/Norn-Finance-Backtesting)
 
 # Troubleshooting
