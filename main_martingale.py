@@ -10,22 +10,7 @@ import backtrader.analyzers as btanalyzers
 import strategies as ndf_strats
 
 
-if __name__ == '__main__':
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-l", "-log-level", dest="log_level", default="INFO")
-    parser.add_argument("-d", "-data", dest="data", default="./datas/SPY.csv")
-    parser.add_argument("-o", "-output-path", dest="output_path", default="./result.json")
-    parser.add_argument("-from", "-from-date", dest="from_date", default="1999-01-01")
-    parser.add_argument("-to", "-to-date", dest="to_date", default="2021-12-31")
-    parser.add_argument("-plot", "-plot", dest="plot", default="1")
-    parser.add_argument("-t", "-type", dest="type", default="1")
-    parser.add_argument("-p", "-period", dest="period", default="252")
-    parser.add_argument("-s", "-trade-size", dest="trade_size", default="0.05")
-    parser.add_argument("-e", "-position-error", dest="position_error", default="0.05")
-    parser.add_argument("-mpl", "-min-position-list", dest="min_position_list", default="")
-    args = parser.parse_args()
-
+def main(args):
     logging.basicConfig(level=args.log_level)
 
     # parse strategy type
@@ -118,3 +103,20 @@ if __name__ == '__main__':
         cerebro.plot()
 
     logging.info('all task done')
+
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-l", "-log-level", dest="log_level", default="INFO")
+    parser.add_argument("-d", "-data", dest="data", default="./datas/SPY.csv")
+    parser.add_argument("-o", "-output-path", dest="output_path", default="./result.json")
+    parser.add_argument("-from", "-from-date", dest="from_date", default="1999-01-01")
+    parser.add_argument("-to", "-to-date", dest="to_date", default="2021-12-31")
+    parser.add_argument("-plot", "-plot", dest="plot", default="1")
+    parser.add_argument("-t", "-type", dest="type", default="1")
+    parser.add_argument("-p", "-period", dest="period", default="252")
+    parser.add_argument("-s", "-trade-size", dest="trade_size", default="0.05")
+    parser.add_argument("-e", "-position-error", dest="position_error", default="0.05")
+    parser.add_argument("-mpl", "-min-position-list", dest="min_position_list", default="")
+    main(parser.parse_args())
