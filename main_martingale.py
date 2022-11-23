@@ -49,7 +49,10 @@ def main(args):
         min_positions=min_positions
     )
 
-    cerebro = bt.Cerebro()
+    cerebro = bt.Cerebro(stdstats=False)
+    cerebro.addobserver(bt.observers.Broker)
+    cerebro.addobserver(bt.observers.BuySell)
+
     cerebro.addstrategy(ndf_strats.Martingale, strategy_param)
 
     cerebro.broker.setcommission()
@@ -108,7 +111,6 @@ def main(args):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-l", "-log-level", dest="log_level", default="INFO")
     parser.add_argument("-d", "-data", dest="data", default="./datas/SPY.csv")
     parser.add_argument("-o", "-output-path", dest="output_path", default="./result.json")
     parser.add_argument("-from", "-from-date", dest="from_date", default="1999-01-01")
@@ -119,4 +121,5 @@ if __name__ == '__main__':
     parser.add_argument("-s", "-trade-size", dest="trade_size", default="0.05")
     parser.add_argument("-e", "-position-error", dest="position_error", default="0.05")
     parser.add_argument("-mpl", "-min-position-list", dest="min_position_list", default="")
+    parser.add_argument("-l", "-log-level", dest="log_level", default="INFO")
     main(parser.parse_args())

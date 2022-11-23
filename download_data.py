@@ -25,11 +25,9 @@ def main(symbol, output_folder_path, log_level):
 
 
 if __name__ == "__main__":
-    root = pathlib.Path(__file__).parent.resolve()
-
     parser = argparse.ArgumentParser()
-    parser.add_argument("-s", "-symbol", dest="symbol", default="SPY")
-    parser.add_argument("-o", "-output-folder-path", dest="output_folder_path", default=str(root / "datas"))
+    parser.add_argument("-s", "-symbol", dest="symbol", default="AAPL")
+    parser.add_argument("-o", "-output-folder-path", dest="output_folder_path", default="./datas")
     parser.add_argument("-l", "-log-level", dest="log_level", default="DEBUG")
     args = parser.parse_args()
 
