@@ -22,7 +22,7 @@ python download_data.py -s "SPY" -o "./datas"
 ### Run backtesting tool for Martingale / Anti-Martingale strategy
 #### Command usage
 ```
-python main_martingale.py
+python main_martingale.py -t -1 -d "./datas/SPY.csv"
 ```
 
 #### Parameters
