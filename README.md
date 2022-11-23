@@ -19,7 +19,7 @@ python download_data.py -s "SPY" -o "./datas"
 -l          (default = "DEBUG")                  log level
 ```
 
-### Run backtesting tool
+### Run backtesting tool for Martingale / Anti-Martingale strategy
 #### Command usage
 ```
 python main_martingale.py
@@ -28,6 +28,15 @@ python main_martingale.py
 #### Parameters
 ```
 -d          (default = "./datas/SPY.csv")        test data path
+-o          (default = "./result.json")          output data path
+-from       (default = "1999-01-01")             backtesting data start date
+-to         (default = "2021-12-31")             backtesting data end date
+-plot       (default = "1")                      plot the backtesting grpah ("1": enable; other: disable)
+-t          (default = "1")                      strategy type ("1": Martingale; "-1": Anti-Martingale)
+-p          (default = "252")                    the period of highest / lowest for strategy threshold
+-s          (default = "0.05")                   position size per trade
+-e          (default = "0.05")                   position error for stragtegy threshold (sensitivity)
+-mpl        (default = {built-in})               martingale strategy threshold line list ({threshold},{position},{color};  e.g. "0,0.2,#29b6f6;0.05,0.4,#03a9f4")
 -l          (default = "INFO")                   log level
 ```
 
@@ -73,3 +82,5 @@ python main_martingale.py
      import warnings
       ```
 
+# License
+This project is licensed under the terms of the MIT license.
