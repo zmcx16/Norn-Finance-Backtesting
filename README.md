@@ -60,6 +60,11 @@ python main_martingale.py
 | C-Martingale | -67.67% | 97.49% | 0.005
 | C-AntiMartingale | -64.99% | 95.15% | 0.005
 
+# Demo
+![image](https://github.com/zmcx16/Norn-Finance-Backtesting/blob/master/demo/martingale-SPY.png)
+
+![image](https://github.com/zmcx16/Norn-Finance-Backtesting/blob/master/demo/anti-martingale-SPY.png)
+
 # Troubleshooting
 
 ### ImportError cannot import name 'warnings' from 'matplotlib.dates'
